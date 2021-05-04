@@ -1,4 +1,4 @@
-﻿using FancyCashRegister.Data;
+﻿using FancyCashRegister.Services.Data;
 using FluentAssertions;
 using System;
 using System.Collections.Generic;

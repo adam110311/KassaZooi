@@ -29,7 +29,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FancyCashRegister\FancyCashRegister.csproj" />
+    <ProjectReference Include="..\FancyCashRegister.Domain\FancyCashRegister.Domain.csproj" />
+    <ProjectReference Include="..\FancyCashRegister.Presentation\FancyCashRegister.Presentation.csproj" />
+    <ProjectReference Include="..\FancyCashRegister.Services\FancyCashRegister.Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="App.secret.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ConnectionStrings.secret.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 	<Target Name="CopyCustomContent" AfterTargets="AfterBuild">
 		<Copy SourceFiles="app.config" DestinationFiles="$(OutDir)\testhost.dll.config" />

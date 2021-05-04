@@ -3,6 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# Files with sensitive content (not to be published in cvs)
+*.secret.*
+
 # User-specific files
 *.rsuser
 *.suo
