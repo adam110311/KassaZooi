@@ -24,45 +24,18 @@ namespace FancyCashRegister.Services.Data
         protected const string VELD_GEBRUIKER_PINCODE = "pincode";
         protected const string VELD_GEBRUIKER_IS_ACTIEF = "is_actief";
 
-        //private Dictionary<int, Rol> _rollen;
 
         public GebruikersRepository() : base()
         {
         }
 
-        private DataTable RollenTable
+        public IEnumerable<Rol> Rollen => RollenTable.AsEnumerable().Select(r => new Rol
         {
-            get
-            {
-                var qry = $@"select
-    {VELD_ROL_ROL_ID},
-    {VELD_ROL_NAAM},
-    {VELD_ROL_BESCHRIJVING},
-    {VELD_ROL_IS_ACTIEF}
-    from rollen
-order by {VELD_ROL_ROL_ID}";
-
-                return GetDataTableForQuery(qry);
-            }
-        }
-
-        private DataTable GebruikersTable
-        {
-            get
-            {
-                var qry = $@"select 
-    {VELD_GEBRUIKER_GEBRUIKER_ID},
-    {VELD_GEBRUIKER_ROL_ID},
-    {VELD_GEBRUIKER_GEBRUIKERSNAAM},
-    {VELD_GEBRUIKER_VOLLEDIGE_NAAM},
-    {VELD_GEBRUIKER_PINCODE},
-    {VELD_GEBRUIKER_IS_ACTIEF}
-from gebruikers
-order by {VELD_GEBRUIKER_GEBRUIKER_ID};";
-
-                return GetDataTableForQuery(qry);
-            }
-        }
+            Id = r.Field<int>(VELD_ROL_ROL_ID),
+            Naam = r.Field<string>(VELD_ROL_NAAM),
+            Beschrijving = r.Field<string>(VELD_ROL_BESCHRIJVING),
+            IsActief = r.Field<bool>(VELD_ROL_IS_ACTIEF),
+        });
 
         public IEnumerable<Gebruiker> Gebruikers => GebruikersTable.AsEnumerable().Select(g => new Gebruiker
         {
@@ -74,43 +47,6 @@ order by {VELD_GEBRUIKER_GEBRUIKER_ID};";
             VolledigeNaam = g.Field<string>(VELD_GEBRUIKER_VOLLEDIGE_NAAM),
             IsActief = g.Field<bool>(VELD_GEBRUIKER_IS_ACTIEF),
         });
-
-        public IEnumerable<Rol> Rollen => RollenTable.AsEnumerable().Select(r => new Rol
-        {
-            Id = r.Field<int>(VELD_ROL_ROL_ID),
-            Naam = r.Field<string>(VELD_ROL_NAAM),
-            Beschrijving = r.Field<string>(VELD_ROL_BESCHRIJVING),
-            IsActief = r.Field<bool>(VELD_ROL_IS_ACTIEF),
-        });
-
-
-        public Gebruiker GetGebruikerFromDataRow(DataRow gebruikerRow) => new()
-        {
-            Id = (int)gebruikerRow[VELD_GEBRUIKER_GEBRUIKER_ID],
-            RolId = (int)gebruikerRow[VELD_GEBRUIKER_ROL_ID],
-            Gebruikersnaam = gebruikerRow[VELD_GEBRUIKER_GEBRUIKERSNAAM] as string,
-            VolledigeNaam = gebruikerRow[VELD_GEBRUIKER_VOLLEDIGE_NAAM] as string,
-            Pincode = gebruikerRow[VELD_GEBRUIKER_PINCODE] as string,
-            IsActief = (bool)gebruikerRow[VELD_GEBRUIKER_IS_ACTIEF]
-        };
-
-        public DataTable GetGebruikerTableByGebruikersnaam(string gebruikersnaam)
-        {
-            var paramGebruikersnaam = "@gebruikersNaam";
-
-            var qry = $@"select 
-    {VELD_GEBRUIKER_GEBRUIKER_ID},
-    {VELD_GEBRUIKER_ROL_ID},
-    {VELD_GEBRUIKER_GEBRUIKERSNAAM},
-    {VELD_GEBRUIKER_VOLLEDIGE_NAAM},
-    {VELD_GEBRUIKER_PINCODE},
-    {VELD_GEBRUIKER_IS_ACTIEF}
-from gebruikers
-where gebruikersnaam = {paramGebruikersnaam}
-order by {VELD_GEBRUIKER_GEBRUIKER_ID};";
-
-            return GetDataTableForQuery(qry, new MySqlParameter(paramGebruikersnaam, gebruikersnaam));
-        }
 
         public bool UpdateGebruiker(Gebruiker gebruiker)
         {
@@ -151,6 +87,69 @@ from gebruikers
 where {VELD_GEBRUIKER_GEBRUIKER_ID} = {paramGebruikerId}";
 
             return DeleteQuery(qry, new MySqlParameter(paramGebruikerId, gebruiker.Id));
+        }
+
+        protected DataTable RollenTable
+        {
+            get
+            {
+                var qry = $@"select
+    {VELD_ROL_ROL_ID},
+    {VELD_ROL_NAAM},
+    {VELD_ROL_BESCHRIJVING},
+    {VELD_ROL_IS_ACTIEF}
+    from rollen
+order by {VELD_ROL_ROL_ID}";
+
+                return GetDataTableForQuery(qry);
+            }
+        }
+
+        protected DataTable GebruikersTable
+        {
+            get
+            {
+                var qry = $@"select 
+    {VELD_GEBRUIKER_GEBRUIKER_ID},
+    {VELD_GEBRUIKER_ROL_ID},
+    {VELD_GEBRUIKER_GEBRUIKERSNAAM},
+    {VELD_GEBRUIKER_VOLLEDIGE_NAAM},
+    {VELD_GEBRUIKER_PINCODE},
+    {VELD_GEBRUIKER_IS_ACTIEF}
+from gebruikers
+order by {VELD_GEBRUIKER_GEBRUIKER_ID};";
+
+                return GetDataTableForQuery(qry);
+            }
+        }
+
+        
+        private Gebruiker GetGebruikerFromDataRow(DataRow gebruikerRow) => new()
+        {
+            Id = (int)gebruikerRow[VELD_GEBRUIKER_GEBRUIKER_ID],
+            RolId = (int)gebruikerRow[VELD_GEBRUIKER_ROL_ID],
+            Gebruikersnaam = gebruikerRow[VELD_GEBRUIKER_GEBRUIKERSNAAM] as string,
+            VolledigeNaam = gebruikerRow[VELD_GEBRUIKER_VOLLEDIGE_NAAM] as string,
+            Pincode = gebruikerRow[VELD_GEBRUIKER_PINCODE] as string,
+            IsActief = (bool)gebruikerRow[VELD_GEBRUIKER_IS_ACTIEF]
+        };
+
+        private DataTable GetGebruikerTableByGebruikersnaam(string gebruikersnaam)
+        {
+            var paramGebruikersnaam = "@gebruikersNaam";
+
+            var qry = $@"select 
+    {VELD_GEBRUIKER_GEBRUIKER_ID},
+    {VELD_GEBRUIKER_ROL_ID},
+    {VELD_GEBRUIKER_GEBRUIKERSNAAM},
+    {VELD_GEBRUIKER_VOLLEDIGE_NAAM},
+    {VELD_GEBRUIKER_PINCODE},
+    {VELD_GEBRUIKER_IS_ACTIEF}
+from gebruikers
+where gebruikersnaam = {paramGebruikersnaam}
+order by {VELD_GEBRUIKER_GEBRUIKER_ID};";
+
+            return GetDataTableForQuery(qry, new MySqlParameter(paramGebruikersnaam, gebruikersnaam));
         }
     }
 }

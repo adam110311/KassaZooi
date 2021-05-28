@@ -26,22 +26,6 @@ namespace FancyCashRegister.Services.Data
         {
         }
 
-        protected DataTable CategorieenTable
-        {
-            get
-            {
-                var qry = $@"
-select 
-    {VELD_CATEGORIE_CATEGORIE_ID},
-    {VELD_CATEGORIE_NAAM},
-    {VELD_CATEGORIE_BESCHRIJVING},
-    {VELD_CATEGORIE_IS_ACTIEF}
-from product_categorieen
-order by {VELD_CATEGORIE_CATEGORIE_ID};";
-
-                return GetDataTableForQuery(qry);
-            }
-        }
 
         public IEnumerable<ProductCategorie> Categorieen => CategorieenTable.AsEnumerable()
             .Select(r => new ProductCategorie
@@ -53,24 +37,7 @@ order by {VELD_CATEGORIE_CATEGORIE_ID};";
             });
 
 
-        private DataTable ProductenTable
-        {
-            get
-            {
-                var qry = $@"
-select 
-    {VELD_PRODUCT_PRODUCT_ID}, 
-    {VELD_PRODUCT_CATEGORIE_ID},
-    {VELD_PRODUCT_NAAM}, 
-    {VELD_PRODUCT_BESCHRIJVING}, 
-    {VELD_PRODUCT_STUKSPRIJS},
-    {VELD_PRODUCT_IS_ACTIEF}
-from producten
-order by {VELD_PRODUCT_PRODUCT_ID};";
-
-                return GetDataTableForQuery(qry);
-            }
-        }
+ 
 
         public IEnumerable<Product> Producten => ProductenTable.AsEnumerable()
             .Select(p => new Product
@@ -84,23 +51,6 @@ order by {VELD_PRODUCT_PRODUCT_ID};";
                 IsActief = p.Field<bool>(VELD_PRODUCT_IS_ACTIEF)
             });
 
-        public DataTable GetProductenTableByCategory(int categoryId)
-        {
-            var paramCategorieId = "@categorieId";
-            var qry = $@"
-select 
-    {VELD_PRODUCT_PRODUCT_ID}, 
-    {VELD_PRODUCT_CATEGORIE_ID},
-    {VELD_PRODUCT_NAAM}, 
-    {VELD_PRODUCT_BESCHRIJVING}, 
-    {VELD_PRODUCT_STUKSPRIJS},
-    {VELD_PRODUCT_IS_ACTIEF}
-from producten
-where {VELD_PRODUCT_CATEGORIE_ID} = {paramCategorieId} or {paramCategorieId} = 0
-order by {VELD_PRODUCT_PRODUCT_ID};";
-
-            return GetDataTableForQuery(qry, new MySqlParameter(paramCategorieId, categoryId));
-        }
 
         public Product ProductToevoegen(Product toeTeVoegenProduct)
         {
@@ -179,6 +129,76 @@ where {VELD_PRODUCT_PRODUCT_ID} = {paramProductId}
 
             return teBewerkenProduct;
         }
+
+        public Product ProductVerwijderen(Product teVerwijderenProduct)
+        {
+            var paramProductId = "@productId";
+            var qry = $@"delete from producten
+where {VELD_PRODUCT_PRODUCT_ID} = {paramProductId}
+";
+
+            var productIdParameter = new MySqlParameter(paramProductId, teVerwijderenProduct.Id);
+
+            DeleteQuery(qry, productIdParameter);
+
+            return teVerwijderenProduct;
+        }
+
+        protected DataTable CategorieenTable
+        {
+            get
+            {
+                var qry = $@"
+select 
+    {VELD_CATEGORIE_CATEGORIE_ID},
+    {VELD_CATEGORIE_NAAM},
+    {VELD_CATEGORIE_BESCHRIJVING},
+    {VELD_CATEGORIE_IS_ACTIEF}
+from product_categorieen
+order by {VELD_CATEGORIE_CATEGORIE_ID};";
+
+                return GetDataTableForQuery(qry);
+            }
+        }
+
+        protected DataTable ProductenTable
+        {
+            get
+            {
+                var qry = $@"
+select 
+    {VELD_PRODUCT_PRODUCT_ID}, 
+    {VELD_PRODUCT_CATEGORIE_ID},
+    {VELD_PRODUCT_NAAM}, 
+    {VELD_PRODUCT_BESCHRIJVING}, 
+    {VELD_PRODUCT_STUKSPRIJS},
+    {VELD_PRODUCT_IS_ACTIEF}
+from producten
+order by {VELD_PRODUCT_PRODUCT_ID};";
+
+                return GetDataTableForQuery(qry);
+            }
+        }
+
+        protected DataTable GetProductenTableByCategory(int categoryId)
+        {
+            var paramCategorieId = "@categorieId";
+            var qry = $@"
+select 
+    {VELD_PRODUCT_PRODUCT_ID}, 
+    {VELD_PRODUCT_CATEGORIE_ID},
+    {VELD_PRODUCT_NAAM}, 
+    {VELD_PRODUCT_BESCHRIJVING}, 
+    {VELD_PRODUCT_STUKSPRIJS},
+    {VELD_PRODUCT_IS_ACTIEF}
+from producten
+where {VELD_PRODUCT_CATEGORIE_ID} = {paramCategorieId} or {paramCategorieId} = 0
+order by {VELD_PRODUCT_PRODUCT_ID};";
+
+            return GetDataTableForQuery(qry, new MySqlParameter(paramCategorieId, categoryId));
+        }
+
+
 
     }
 }

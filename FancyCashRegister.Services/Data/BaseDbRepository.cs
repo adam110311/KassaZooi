@@ -9,10 +9,11 @@ using System.Threading.Tasks;
 
 namespace FancyCashRegister.Services.Data
 {
-    public abstract class BaseDbRepository : IDisposable
+    public abstract class BaseDbRepository : IDisposable, IDbRepository
     {
-        protected readonly MySqlConnection _connection;
         private bool _disposedValue;
+
+        protected readonly MySqlConnection _connection;
 
         public string LastError { get; private set; }
 
@@ -58,7 +59,7 @@ namespace FancyCashRegister.Services.Data
             return executeNonQuery(qry, parameters).rowsAffected > 0;
         }
 
-        public bool DeleteQuery(string qry, params MySqlParameter[] parameters)
+        protected bool DeleteQuery(string qry, params MySqlParameter[] parameters)
         {
             return executeNonQuery(qry, parameters).rowsAffected > 0;
         }
@@ -90,12 +91,11 @@ namespace FancyCashRegister.Services.Data
                 LastError = $"Onverwachte out opgetreden bij uitvoeren sql statement: {ex.Message}";
                 return (-1, -1);
             }
-
-
-
         }
 
-
+        //
+        // dispose pattern -->
+        //
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposedValue)
@@ -124,5 +124,9 @@ namespace FancyCashRegister.Services.Data
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
+
+        //
+        // <-- end dispose pattern
+        //
     }
 }
