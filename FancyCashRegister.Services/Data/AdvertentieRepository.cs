@@ -22,9 +22,12 @@ namespace FancyCashRegister.Services.Data
         {
             _configRepo = new ConfigRepository();
             // TODO: tied to local filesystem, needs to be independent of location -->
-            _adBaseUri = new Uri(_configRepo.GetValue<string>("BaseUriAds"));
+            //_adBaseUri = new Uri(_configRepo.GetValue<string>("BaseUriAds"));
+            //_advertentiePaden = new List<string>(Directory.GetFiles(_adBaseUri.LocalPath));
 
-            _advertentiePaden = new List<string>(Directory.GetFiles(_adBaseUri.LocalPath));
+
+
+            _advertentiePaden = new List<string>(Directory.GetFiles("../../../Resources/Pictures/"));
             _adEnumerator = _advertentiePaden.GetEnumerator();
 
         }
@@ -41,7 +44,8 @@ namespace FancyCashRegister.Services.Data
 
         }
 
-        public Uri GetNextAdUri()
+        /*public Uri GetNextAdUri()*/
+        public string GetNextAdUri()
         {
             if (!_adEnumerator.MoveNext())
             {
@@ -49,7 +53,8 @@ namespace FancyCashRegister.Services.Data
                 _adEnumerator.MoveNext();
             }
             var currAdPath = _adEnumerator.Current;
-            return new Uri(currAdPath);
+            /*return new Uri(currAdPath);*/
+            return currAdPath;
         }
 
 

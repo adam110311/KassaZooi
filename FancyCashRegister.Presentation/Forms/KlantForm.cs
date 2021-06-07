@@ -71,7 +71,7 @@ namespace FancyCashRegister.Forms
 
         private void _advertentieTimer_Tick(object sender, EventArgs e)
         {
-            pbAdvertentie01.Load(_advertentieRepo.GetNextAdUri().AbsoluteUri);
+            pbAdvertentie01.Load(_advertentieRepo.GetNextAdUri());
         }
 
         private void dgProductenInOrder_DataSourceChanged(object sender, EventArgs e)
