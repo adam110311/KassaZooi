@@ -51,7 +51,6 @@ namespace FancyCashRegister.Forms
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            System.IO.File.WriteAllText(@"C:\temp\test.txt", "Ditiseentest.");
             if (lbGebruikers.SelectedItem is Gebruiker geselecteerdeGebruiker)
             {
                 if (!geselecteerdeGebruiker.IsActief)
