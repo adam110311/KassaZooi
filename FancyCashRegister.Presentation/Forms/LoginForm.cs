@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Serilog;
 
 namespace FancyCashRegister.Forms
 {
@@ -24,8 +25,6 @@ namespace FancyCashRegister.Forms
             _gebruikersRepo = new GebruikersRepository();
             _config = new ConfigRepository().GetAppConfig();
         }
-
-        
 
         private void LoginForm_Load(object sender, EventArgs e)
         {
