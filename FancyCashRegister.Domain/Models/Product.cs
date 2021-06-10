@@ -8,10 +8,10 @@ namespace FancyCashRegister.Domain.Models
 {
     public class Product
     {
-        public int Id { get; set; }
-        public int CategorieId { get; set; }
-        public ProductCategorie Categorie { get; set; }
-        public string Naam { get; set; }
+        public int OrderId { get; set; }
+        public int ProductId { get; set; }
+        public ProductCategorie Order { get; set; }
+        public string Verkoopprijs { get; set; }
         public string Beschrijving { get; set; }
         public decimal Stuksprijs { get; set; }
         public bool IsActief { get; set; }

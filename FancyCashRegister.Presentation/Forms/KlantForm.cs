@@ -97,12 +97,12 @@ namespace FancyCashRegister.Forms
         private void dgProductenInOrder_ColumnAdded(object sender, DataGridViewColumnEventArgs e)
         {
             var ignoreColumns = new[] { 
-                nameof(OrderProduct.Id), 
+                nameof(OrderProduct.OrderId), 
                 nameof(OrderProduct.Beschrijving), 
                 nameof(OrderProduct.IsActief), 
                 nameof(OrderProduct.Plus), 
                 nameof(OrderProduct.Min), 
-                nameof(OrderProduct.Categorie) 
+                nameof(OrderProduct.Order) 
             };
             var alignRightColumns = new[] { 
                 nameof(OrderProduct.Stuksprijs), 

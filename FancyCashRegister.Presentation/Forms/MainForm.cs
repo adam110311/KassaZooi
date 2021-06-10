@@ -87,9 +87,9 @@ namespace FancyCashRegister.Forms
         private void dgBeschikbareProducten_ColumnAdded(object sender, DataGridViewColumnEventArgs e)
         {
             var ignoreColumns = new[] { 
-                nameof(Product.Id), 
+                nameof(Product.OrderId), 
                 nameof(Product.Beschrijving), 
-                nameof(Product.Categorie), 
+                nameof(Product.Order), 
                 nameof(Product.IsActief), 
             };
             var alignRightColumns = new[] { 
@@ -118,11 +118,11 @@ namespace FancyCashRegister.Forms
         private void dgProductenInOrder_ColumnAdded(object sender, DataGridViewColumnEventArgs e)
         {
             var ignoreColumns = new[] { 
-                nameof(OrderProduct.Id), 
+                nameof(OrderProduct.OrderId), 
                 nameof(OrderProduct.Beschrijving), 
                 nameof(OrderProduct.IsActief), 
-                nameof(OrderProduct.CategorieId), 
-                nameof(OrderProduct.Categorie), 
+                nameof(OrderProduct.ProductId), 
+                nameof(OrderProduct.Order), 
             };
             var alignRightColumns = new[] { 
                 nameof(OrderProduct.TotaalPrijs), 
@@ -160,7 +160,7 @@ namespace FancyCashRegister.Forms
             if (bsProductCategorieen.Current is ProductCategorie geselecteerdeProductCategorie)
             {
                 bsBeschikbareProducten.DataSource = _productenRepo.Producten
-                    .Where(p => p.Categorie.Id == geselecteerdeProductCategorie.Id);
+                    .Where(p => p.Order.Id == geselecteerdeProductCategorie.Id);
             }
         }
 
@@ -170,15 +170,15 @@ namespace FancyCashRegister.Forms
             {
                 var toeTeVoegenProduct = new OrderProduct()
                 {
-                    Id = geselecteeerdProduct.Id,
-                    Naam = geselecteeerdProduct.Naam,
+                    OrderId = geselecteeerdProduct.OrderId,
+                    Verkoopprijs = geselecteeerdProduct.Verkoopprijs,
                     Beschrijving = geselecteeerdProduct.Beschrijving,
                     Stuksprijs = geselecteeerdProduct.Stuksprijs,
                 };
                 _ = int.TryParse(txtGeselecteerdProductAantal.Text, out var aantalToeTeVoegen);
 
                 var alAanwezigProduct = _actieveOrder.Producten
-                    .Where(p => p.Id == toeTeVoegenProduct.Id)
+                    .Where(p => p.OrderId == toeTeVoegenProduct.OrderId)
                     .FirstOrDefault();
 
                 if (alAanwezigProduct != null)
@@ -239,7 +239,7 @@ namespace FancyCashRegister.Forms
                     txtGeselecteerdProductAantal.Text = "1";
                 }
 
-                txtGeselecteerdProductNaam.Text = geselecteerdProduct.Naam;
+                txtGeselecteerdProductNaam.Text = geselecteerdProduct.Verkoopprijs;
                 txtGeselecteerdProductStuksprijs.Text = $"p/s: {geselecteerdProduct.Stuksprijs:c}";
                 txtGeselecteerdProductTotaalPrijs.Text = $"tot: {aantalProducten * geselecteerdProduct.Stuksprijs:c}";
             }

@@ -19,8 +19,8 @@ namespace FancyCashRegister.Domain.Models
         {
             return new OrderProduct
             {
-                Id = product.Id,
-                Naam = product.Naam,
+                OrderId = product.OrderId,
+                Verkoopprijs = product.Verkoopprijs,
                 Beschrijving = product.Beschrijving,
                 Stuksprijs = product.Stuksprijs,
                 IsActief = product.IsActief,

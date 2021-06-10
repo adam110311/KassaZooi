@@ -42,10 +42,10 @@ namespace FancyCashRegister.Services.Data
         public IEnumerable<Product> Producten => ProductenTable.AsEnumerable()
             .Select(p => new Product
             {
-                Id = p.Field<int>(VELD_PRODUCT_PRODUCT_ID),
-                CategorieId = p.Field<int>(VELD_PRODUCT_CATEGORIE_ID),
-                Categorie = Categorieen.Where(c => c.Id == p.Field<int>(VELD_PRODUCT_CATEGORIE_ID)).FirstOrDefault(),
-                Naam = p.Field<string>(VELD_PRODUCT_NAAM),
+                OrderId = p.Field<int>(VELD_PRODUCT_PRODUCT_ID),
+                ProductId = p.Field<int>(VELD_PRODUCT_CATEGORIE_ID),
+                Order = Categorieen.Where(c => c.Id == p.Field<int>(VELD_PRODUCT_CATEGORIE_ID)).FirstOrDefault(),
+                Verkoopprijs = p.Field<string>(VELD_PRODUCT_NAAM),
                 Beschrijving = p.Field<string>(VELD_PRODUCT_BESCHRIJVING),
                 Stuksprijs = p.Field<decimal>(VELD_PRODUCT_STUKSPRIJS),
                 IsActief = p.Field<bool>(VELD_PRODUCT_IS_ACTIEF)
@@ -77,8 +77,8 @@ values(
     {paramIsActief}
 )";
             var parameters = new[] {
-                new MySqlParameter(paramCategorieId, toeTeVoegenProduct.Categorie.Id),
-                new MySqlParameter(paramNaam, toeTeVoegenProduct.Naam),
+                new MySqlParameter(paramCategorieId, toeTeVoegenProduct.Order.Id),
+                new MySqlParameter(paramNaam, toeTeVoegenProduct.Verkoopprijs),
                 new MySqlParameter(paramBeschrijving, toeTeVoegenProduct.Beschrijving),
                 new MySqlParameter(paramStuksprijs, toeTeVoegenProduct.Stuksprijs),
                 new MySqlParameter(paramIsActief, toeTeVoegenProduct.IsActief),
@@ -86,7 +86,7 @@ values(
             var (success, insertedId) = InsertQuery(qry, parameters);
             if (success)
             {
-                toeTeVoegenProduct.Id = insertedId; 
+                toeTeVoegenProduct.OrderId = insertedId; 
                 return toeTeVoegenProduct;
             }
             else
@@ -118,8 +118,8 @@ set
 where {VELD_PRODUCT_PRODUCT_ID} = {paramProductId}
 ";
             var parameters = new[] {
-                new MySqlParameter(paramCategorieId, teBewerkenProduct.Categorie.Id),
-                new MySqlParameter(paramNaam, teBewerkenProduct.Naam),
+                new MySqlParameter(paramCategorieId, teBewerkenProduct.Order.Id),
+                new MySqlParameter(paramNaam, teBewerkenProduct.Verkoopprijs),
                 new MySqlParameter(paramBeschrijving, teBewerkenProduct.Beschrijving),
                 new MySqlParameter(paramStuksprijs, teBewerkenProduct.Stuksprijs),
                 new MySqlParameter(paramIsActief, teBewerkenProduct.IsActief),
@@ -137,7 +137,7 @@ where {VELD_PRODUCT_PRODUCT_ID} = {paramProductId}
 where {VELD_PRODUCT_PRODUCT_ID} = {paramProductId}
 ";
 
-            var productIdParameter = new MySqlParameter(paramProductId, teVerwijderenProduct.Id);
+            var productIdParameter = new MySqlParameter(paramProductId, teVerwijderenProduct.OrderId);
 
             DeleteQuery(qry, productIdParameter);
 
