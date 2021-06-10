@@ -18,7 +18,6 @@ namespace FancyCashRegister.Forms
     {
         private readonly GebruikersRepository _gebruikersRepo;
         private readonly Config _config;
-
         public LoginForm()
         {
             InitializeComponent();
@@ -26,8 +25,16 @@ namespace FancyCashRegister.Forms
             _config = new ConfigRepository().GetAppConfig();
         }
 
+        
         private void LoginForm_Load(object sender, EventArgs e)
         {
+            string datum = DateTime.UtcNow.ToString("dd-MM-yyyy");
+            using (var log = new LoggerConfiguration()
+                .WriteTo.File(@"C:\temp\logs" + datum + ".txt")
+                .CreateLogger())
+            {
+                log.Information("Applicatie gestart");
+            }
             IEnumerable<Screen> screens = Screen.AllScreens;
 
             Rectangle bounds = screens
@@ -47,7 +54,6 @@ namespace FancyCashRegister.Forms
             txtPincode.Mask = new string('0', _config.LengtePincode);
             lbGebruikers.Select();
         }
-
         private void btnLogin_Click(object sender, EventArgs e)
         {
             if (lbGebruikers.SelectedItem is Gebruiker geselecteerdeGebruiker)
@@ -62,14 +68,29 @@ namespace FancyCashRegister.Forms
 
                     if (ingevoerdePinCorrect)
                     {
+
                         ConfigRepository.HuidigeGebruiker = geselecteerdeGebruiker;
 
                         new MainForm().Show(this);
                         txtPincode.Text = string.Empty;
                         Hide();
+                        string datum = DateTime.UtcNow.ToString("dd-MM-yyyy");
+                        using (var log = new LoggerConfiguration()
+                            .WriteTo.File(@"C:\temp\logs" + datum + ".txt")
+                            .CreateLogger())
+                        {
+                            log.Information(Convert.ToString(ConfigRepository.HuidigeGebruiker.VolledigeNaam) + " " + "succesfol ingelogd");
+                        }
                     }
                     else
                     {
+                        string datum = DateTime.UtcNow.ToString("dd-MM-yyyy");
+                        using (var log = new LoggerConfiguration()
+                            .WriteTo.File(@"C:\temp\logs" + datum + ".txt")
+                            .CreateLogger())
+                        {
+                            log.Warning("Combinatie gebruikersnaam / pin niet gevonden");
+                        }
                         MessageBox.Show("Combinatie gebruikersnaam / pin niet gevonden", "Niet gevonden", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                     }
                 }

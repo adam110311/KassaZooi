@@ -11,6 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Serilog;
 
 namespace FancyCashRegister.Forms
 {
@@ -42,6 +43,13 @@ namespace FancyCashRegister.Forms
             if (doorgaanMetAflsuiten)
             {
                 Application.Exit();
+                string datum = DateTime.UtcNow.ToString("dd-MM-yyyy");
+                using (var log = new LoggerConfiguration()
+                    .WriteTo.File(@"C:\temp\logs" + datum + ".txt")
+                    .CreateLogger())
+                {
+                    log.Information(Convert.ToString(ConfigRepository.HuidigeGebruiker.VolledigeNaam) + " " + "heeft afgesloten");
+                }
             }
         }
 
@@ -164,11 +172,25 @@ namespace FancyCashRegister.Forms
                 {
                     MessageBox.Show("Fout opgetreden bij opslaan wijzigingen", "Fout opgetreden", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
+                string datum = DateTime.UtcNow.ToString("dd-MM-yyyy");
+                using (var log = new LoggerConfiguration()
+                    .WriteTo.File(@"C:\temp\logs" + datum + ".txt")
+                    .CreateLogger())
+                {
+                    log.Information(Convert.ToString(ConfigRepository.HuidigeGebruiker.VolledigeNaam) + " " + "heeft een gebruiker aangepast");
+                }
             }
         }
 
         private void btnAfmelden_Click(object sender, EventArgs e)
         {
+            string datum = DateTime.UtcNow.ToString("dd-MM-yyyy");
+            using (var log = new LoggerConfiguration()
+                .WriteTo.File(@"C:\temp\logs" + datum + ".txt")
+                .CreateLogger())
+            {
+                log.Information(Convert.ToString(ConfigRepository.HuidigeGebruiker.VolledigeNaam) + " " + "heeft afgemeld");
+            }
             ConfigRepository.HuidigeGebruiker = null;
             Owner.Owner.Show();
             Owner.Close();

@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using FancyCashRegister.Domain.Models;
 using FancyCashRegister.Services.Data;
 using FancyCashRegister.Services.Helpers;
+using Serilog;
 
 namespace FancyCashRegister.Forms
 {
@@ -168,6 +169,7 @@ namespace FancyCashRegister.Forms
         {
             if (bsBeschikbareProducten.Current is Product geselecteeerdProduct)
             {
+
                 var toeTeVoegenProduct = new OrderProduct()
                 {
                     OrderId = geselecteeerdProduct.OrderId,
@@ -194,6 +196,13 @@ namespace FancyCashRegister.Forms
                 }
                 txtOrderTotaalPrijs.Text = $"{_actieveOrder.TotaalPrijs:c2}";
 
+                string datum = DateTime.UtcNow.ToString("dd-MM-yyyy");
+                using (var log = new LoggerConfiguration()
+                    .WriteTo.File(@"C:\temp\logs" + datum + ".txt")
+                    .CreateLogger())
+                {
+                    log.Information(Convert.ToString(ConfigRepository.HuidigeGebruiker.VolledigeNaam) + "product toegevoeg");
+                }
             }
         }
 

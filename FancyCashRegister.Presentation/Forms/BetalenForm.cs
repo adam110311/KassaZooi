@@ -10,6 +10,8 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Serilog;
+using FancyCashRegister.Services.Data;
 
 namespace FancyCashRegister.Forms
 {
@@ -72,6 +74,15 @@ namespace FancyCashRegister.Forms
             _mainForm.Reset();
             _mainForm.Show();
             Close();
+            
+
+            string datum = DateTime.UtcNow.ToString("dd-MM-yyyy");
+            using (var log = new LoggerConfiguration()
+                .WriteTo.File(@"C:\temp\logs" + datum + ".txt")
+                .CreateLogger())
+            {
+                log.Information(Convert.ToString(ConfigRepository.HuidigeGebruiker.VolledigeNaam) + " " + "betaald");
+            }
         }
         private void dgProductenInOrder_ColumnAdded(object sender, DataGridViewColumnEventArgs e)
         {

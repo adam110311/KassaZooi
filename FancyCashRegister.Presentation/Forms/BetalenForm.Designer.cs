@@ -29,9 +29,9 @@ namespace FancyCashRegister.Forms
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.txtTeBetalen = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.txtOntvangen = new System.Windows.Forms.TextBox();
@@ -52,10 +52,10 @@ namespace FancyCashRegister.Forms
             this.lblTeruggave = new System.Windows.Forms.Label();
             this.gbBetaling = new System.Windows.Forms.GroupBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.lbBeschikbareActieCodes = new System.Windows.Forms.ListBox();
+            this.btnActiveerKortingsCode = new System.Windows.Forms.Button();
             this.txtKortingsCode = new System.Windows.Forms.TextBox();
             this.lblKortingsCode = new System.Windows.Forms.Label();
-            this.btnActiveerKortingsCode = new System.Windows.Forms.Button();
+            this.lbBeschikbareActieCodes = new System.Windows.Forms.ListBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgProductenInOrder)).BeginInit();
             this.gbBetaling.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -160,8 +160,8 @@ namespace FancyCashRegister.Forms
             // colOrderProductStuksprijs
             // 
             this.colOrderProductStuksprijs.DataPropertyName = "Stuksprijs";
-            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            this.colOrderProductStuksprijs.DefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.colOrderProductStuksprijs.DefaultCellStyle = dataGridViewCellStyle1;
             this.colOrderProductStuksprijs.HeaderText = "Stuksprijs";
             this.colOrderProductStuksprijs.MinimumWidth = 6;
             this.colOrderProductStuksprijs.Name = "colOrderProductStuksprijs";
@@ -171,8 +171,8 @@ namespace FancyCashRegister.Forms
             // colOrderProductAantal
             // 
             this.colOrderProductAantal.DataPropertyName = "Aantal";
-            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            this.colOrderProductAantal.DefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.colOrderProductAantal.DefaultCellStyle = dataGridViewCellStyle2;
             this.colOrderProductAantal.HeaderText = "Aantal";
             this.colOrderProductAantal.MinimumWidth = 6;
             this.colOrderProductAantal.Name = "colOrderProductAantal";
@@ -182,8 +182,8 @@ namespace FancyCashRegister.Forms
             // colOrderProductTotaalPrijs
             // 
             this.colOrderProductTotaalPrijs.DataPropertyName = "TotaalPrijs";
-            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
-            this.colOrderProductTotaalPrijs.DefaultCellStyle = dataGridViewCellStyle9;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.colOrderProductTotaalPrijs.DefaultCellStyle = dataGridViewCellStyle3;
             this.colOrderProductTotaalPrijs.HeaderText = "Totaal";
             this.colOrderProductTotaalPrijs.MinimumWidth = 6;
             this.colOrderProductTotaalPrijs.Name = "colOrderProductTotaalPrijs";
@@ -286,14 +286,15 @@ namespace FancyCashRegister.Forms
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Kortingen && Acties";
             // 
-            // lbBeschikbareActieCodes
+            // btnActiveerKortingsCode
             // 
-            this.lbBeschikbareActieCodes.FormattingEnabled = true;
-            this.lbBeschikbareActieCodes.ItemHeight = 15;
-            this.lbBeschikbareActieCodes.Location = new System.Drawing.Point(6, 22);
-            this.lbBeschikbareActieCodes.Name = "lbBeschikbareActieCodes";
-            this.lbBeschikbareActieCodes.Size = new System.Drawing.Size(120, 94);
-            this.lbBeschikbareActieCodes.TabIndex = 14;
+            this.btnActiveerKortingsCode.Location = new System.Drawing.Point(269, 157);
+            this.btnActiveerKortingsCode.Name = "btnActiveerKortingsCode";
+            this.btnActiveerKortingsCode.Size = new System.Drawing.Size(75, 43);
+            this.btnActiveerKortingsCode.TabIndex = 15;
+            this.btnActiveerKortingsCode.Text = "Activeer";
+            this.btnActiveerKortingsCode.UseVisualStyleBackColor = true;
+            this.btnActiveerKortingsCode.Click += new System.EventHandler(this.btnActiveerKortingsCode_Click);
             // 
             // txtKortingsCode
             // 
@@ -314,21 +315,20 @@ namespace FancyCashRegister.Forms
             this.lblKortingsCode.TabIndex = 13;
             this.lblKortingsCode.Text = "Kortingscode";
             // 
-            // btnActiveerKortingsCode
+            // lbBeschikbareActieCodes
             // 
-            this.btnActiveerKortingsCode.Location = new System.Drawing.Point(269, 157);
-            this.btnActiveerKortingsCode.Name = "btnActiveerKortingsCode";
-            this.btnActiveerKortingsCode.Size = new System.Drawing.Size(75, 43);
-            this.btnActiveerKortingsCode.TabIndex = 15;
-            this.btnActiveerKortingsCode.Text = "Activeer";
-            this.btnActiveerKortingsCode.UseVisualStyleBackColor = true;
-            this.btnActiveerKortingsCode.Click += new System.EventHandler(this.btnActiveerKortingsCode_Click);
+            this.lbBeschikbareActieCodes.FormattingEnabled = true;
+            this.lbBeschikbareActieCodes.ItemHeight = 15;
+            this.lbBeschikbareActieCodes.Location = new System.Drawing.Point(6, 22);
+            this.lbBeschikbareActieCodes.Name = "lbBeschikbareActieCodes";
+            this.lbBeschikbareActieCodes.Size = new System.Drawing.Size(120, 94);
+            this.lbBeschikbareActieCodes.TabIndex = 14;
             // 
             // BetalenForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(929, 505);
+            this.ClientSize = new System.Drawing.Size(1049, 625);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.gbBetaling);
             this.Controls.Add(this.btnAfgerond);
