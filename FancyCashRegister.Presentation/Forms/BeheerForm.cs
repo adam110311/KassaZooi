@@ -177,7 +177,7 @@ namespace FancyCashRegister.Forms
                     .WriteTo.File(@"C:\temp\logs" + datum + ".txt")
                     .CreateLogger())
                 {
-                    log.Information(Convert.ToString(ConfigRepository.HuidigeGebruiker.VolledigeNaam) + " " + "heeft een gebruiker aangepast");
+                    log.Debug(Convert.ToString(ConfigRepository.HuidigeGebruiker.VolledigeNaam) + " " + "heeft een gebruiker aangepast");
                 }
             }
         }
