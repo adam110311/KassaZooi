@@ -201,7 +201,7 @@ namespace FancyCashRegister.Forms
                     .WriteTo.File(@"C:\temp\logs" + datum + ".txt")
                     .CreateLogger())
                 {
-                    log.Information(Convert.ToString(ConfigRepository.HuidigeGebruiker.VolledigeNaam) + "product toegevoeg");
+                    log.Information(Convert.ToString(ConfigRepository.HuidigeGebruiker.VolledigeNaam) + " " +toeTeVoegenProduct.Verkoopprijs + " " + aantalToeTeVoegen + " " +  "product/producten toegevoeg");
                 }
             }
         }
