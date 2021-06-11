@@ -19,6 +19,6 @@ namespace FancyCashRegister.Domain.Models
         public bool Betaald { get; set; }
         public Korting ActieveKorting { get; set; }
         public int OrderId { get; set; }
-        public string DatumAanmaak { get; set; }
+        public DateTimeOffset DatumAanmaak { get; set; }
     }
 }
