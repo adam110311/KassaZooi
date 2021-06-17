@@ -31,13 +31,13 @@ namespace FancyCashRegister.Forms
 
             IEnumerable<Order> ordersInPeriode = orderRepo.GetOrdersInPeriode(datumVan, datumTot);
 
-            var rapportHeader = $"datum aanmaak;order id; aantal items; totaalprijs";
+            var rapportHeader = $"datum aanmaak;order id; aantal items; totaalprijs{Environment.NewLine}";
 
             File.WriteAllText(bestandsnaam, rapportHeader, Encoding.UTF8);
 
             foreach(var order in ordersInPeriode)
             {
-                var regel = $"{order.DatumAanmaak:yyyy-MM-dd hh:mm};{order.OrderId};{order.Producten.Count()};{order.TotaalPrijs:C2}";
+                var regel = $"{order.DatumAanmaak:yyyy-MM-dd hh:mm};{order.OrderId};{order.Producten.Count()};{order.TotaalPrijs:C2}{Environment.NewLine}";
                 File.AppendAllText(bestandsnaam, regel, Encoding.UTF8);
             }
 

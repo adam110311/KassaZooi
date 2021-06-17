@@ -132,8 +132,12 @@ namespace FancyCashRegister.Forms
         private void bsProductenInOrder_ListChanged(object sender, ListChangedEventArgs e)
         {
             var productenInOrder = bsProductenInOrder.DataSource as IEnumerable<OrderProduct>;
-            var totaalPrijs = productenInOrder.Sum(p => p.TotaalPrijs);
-            txtTeBetalen.Text = $"{totaalPrijs:c2}";
+            if (productenInOrder != null)
+            {
+                var totaalPrijs = productenInOrder.Sum(p => p.TotaalPrijs);
+                txtTeBetalen.Text = $"{totaalPrijs:c2}";
+
+            }
         }
 
         public void Reset()

@@ -70,6 +70,7 @@ namespace FancyCashRegister.Forms
         private void btnAfgerond_Click(object sender, EventArgs e)
         {
             _order.Betaald = true;
+            _order.DatumAanmaak = DateTime.Now;
             OrderRepository orderRepository = new OrderRepository();
             orderRepository.AddOrder(_order);
 
