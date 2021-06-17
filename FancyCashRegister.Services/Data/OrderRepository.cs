@@ -1,173 +1,121 @@
 ﻿using FancyCashRegister.Domain.Models;
 using MySql.Data.MySqlClient;
+using MySql.Data.Types;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace FancyCashRegister.Services.Data
 {
+    /// <summary>
+    /// Deze repository gaat uit van onderstaande tabel definitie:
+    /// 
+    ///		drop table if exists orders;
+    ///		create table orders(
+    ///			order_id int primary key auto_increment,
+    ///		    datumtijd_aanmaak datetime not null
+    ///		);
+    ///		
+    ///		drop table if exists order_producten;
+    ///		create table order_producten(
+    ///			order_id int not null,
+    ///		    product_id int not null,
+    ///		    aantal int,
+    ///		    verkoopprijs decimal(14,2)
+    ///		);
+    ///		
+    ///		alter table order_producten
+    ///			add constraint `fk_order` 
+    ///				foreign key (order_id) references orders(order_id),
+    ///		    add constraint `fk_product`
+    ///				foreign key (product_id) references producten(product_id);
+    /// </summary>
     public class OrderRepository : BaseDbRepository
     {
-        protected const string VELD_ORDERS_ORDER_ID = "order_id";
-        protected const string VELD_ORDERS_DATUM_AANMAAK = "datum_aanmaak";
-
-        protected const string VELD_ORDER_PRODUCT_ORDER_ID = "order_id";
-        protected const string VELD_ORDER_PRODUCT_PRODUCT_ID = "product_id";
-        protected const string VELD_ORDER_PRODUCT_AANTAL = "Aantal";
-        protected const string VELD_ORDER_PRODUCT_VERKOOPPRIJS = "Verkoopprijs";
-
-
         public OrderRepository() : base()
         {
         }
 
+        public IEnumerable<Order> Orders { get; set; }
 
-        public IEnumerable<Order> Orders => (IEnumerable<Order>)OrdersTable.AsEnumerable()
-            .Select(r => new Order
-            {
-                OrderId = r.Field<int>(VELD_ORDERS_ORDER_ID),
-                DatumAanmaak = r.Field<string>(VELD_ORDERS_DATUM_AANMAAK),
-                
-            });
-
-
-
-
-        public IEnumerable<OrderProduct> OrderProducten => OrderProductenTable.AsEnumerable()
-            .Select(p => new OrderProduct
-            {
-                OrderId = p.Field<int>(VELD_ORDER_PRODUCT_ORDER_ID),
-                ProductId = p.Field<int>(VELD_ORDER_PRODUCT_PRODUCT_ID),
-                Aantal = p.Field<int>(VELD_ORDER_PRODUCT_AANTAL),
-                Verkoopprijs = p.Field<string>(VELD_ORDER_PRODUCT_VERKOOPPRIJS)
-                
-            });
-
-
-        public Product ProductToevoegen(Product toeTeVoegenProduct)
+        public Order AddOrder(Order order)
         {
-            //var paramProductId = "@productId";
-            var paramOrderId = "@orderId";
-            var paramDatumAanmaak = "@datumAanmaak";
+            var paramDtAanmaak = "@dt_aanmaak";
 
-            var qry = $@"
-insert into orders(
-    {VELD_ORDERS_ORDER_ID}, 
-    {VELD_ORDERS_DATUM_AANMAAK}
-)
-values(
-    {paramOrderId}, 
-    {paramDatumAanmaak}
-)";
+            // eerst order aanmaken -->
+            var qryInsertOrder = $@"insert into orders
+(datum_aanmaak) 
+values({paramDtAanmaak});";
+
+            var datumAanmaak = new MySqlDateTime(order.DatumAanmaak.DateTime);
+            var parameter = new MySqlParameter(paramDtAanmaak, MySqlDbType.DateTime);
+            parameter.Value = datumAanmaak;
+
+            (var orderInsertSuccess, var newOrderId) = InsertQuery(
+                qryInsertOrder,
+                parameter
+                );
+
+            if (orderInsertSuccess)
+            {
+                // nieuw id toewijzen aan de order -->
+                order.OrderId = newOrderId;
+
+                // vervolgens de producten in de order aanmaken in de associative tabel -->
+                var paramOrderId = "@order_id";
+                var paramProductId = "@product_id";
+                var paramAantalItems = "@aantal";
+                var paramVerkoopprijs = "@verkoopprijs";
+                var qryInsertOrderProducts = $@"insert into order_product
+(order_id, product_id, Aantal, Verkoopprijs) 
+values({paramOrderId}, {paramProductId}, {paramAantalItems}, {paramVerkoopprijs})";
+
+                foreach (var productOrder in order.Producten)
+                {
+                    var parameters = new[]
+                    {
+                    new MySqlParameter(paramOrderId, order.OrderId),
+                    new MySqlParameter(paramProductId, productOrder.OrderId),
+                    new MySqlParameter(paramAantalItems, productOrder.Aantal),
+                    new MySqlParameter(paramVerkoopprijs, productOrder.Stuksprijs),
+
+                };
+                    (var productOrderSuccess, _) = InsertQuery(qryInsertOrderProducts, parameters);
+                    // TODO: wat te doen als order is aangemaakt maar producten in order geeft fout...
+                    // (transactie start / commit / rollback)
+                }
+            }
+
+
+            // pass by ref maar toch teruggeven zodat semantisch het plaatje klopt -->
+            return order;
+        }
+
+        public bool UpdateOrder(Order order)
+        {
+            var paramOrderId = "@order_id";
+            var paramDtAanmaak = "@dt_aanmaak";
+
+            var qry = $@"update order set datumtijd_aanmaak = {paramDtAanmaak} where order_id = {paramOrderId};";
             var parameters = new[] {
-                new MySqlParameter(paramOrderId, toeTeVoegenProduct.Order.Id),
-                new MySqlParameter(paramDatumAanmaak, toeTeVoegenProduct.Verkoopprijs),
+                new MySqlParameter(paramOrderId, order.OrderId),
+                new MySqlParameter(paramDtAanmaak, order.DatumAanmaak)
             };
-            var (success, insertedId) = InsertQuery(qry, parameters);
-            if (success)
-            {
-                toeTeVoegenProduct.OrderId = insertedId;
-                return toeTeVoegenProduct;
-            }
-            else
-            {
-                // TODO: null of simpelweg Id leeg laten? -->
-                return null;
-            }
+            var success = UpdateQuery(qry, parameters);
 
-
-
+            return success;
         }
 
-        public Product ProductBewerken(Product teBewerkenProduct)
+        public bool DeleteOrder(Order order)
         {
-            var paramOrderId = "@orderId";
-            var paramDatumAanmaak = "@datumAanmaak";
+            var paramOrderId = "@order_id";
+            var qry = $@"delete from orders where order_id = {paramOrderId};";
 
-            var qry = $@"
-update orders
-set 
-    {VELD_ORDERS_ORDER_ID} = {paramOrderId}, 
-    {VELD_ORDERS_DATUM_AANMAAK} = {paramDatumAanmaak}
-where {VELD_ORDERS_ORDER_ID} = {paramOrderId}
-";
-            var parameters = new[] {
-                new MySqlParameter(paramOrderId, teBewerkenProduct.Order.Id),
-                new MySqlParameter(paramDatumAanmaak, teBewerkenProduct.Verkoopprijs),
-            };
-            _ = UpdateQuery(qry, parameters);
+            var success = DeleteQuery(qry, new MySqlParameter(paramOrderId, order.OrderId));
 
-
-            return teBewerkenProduct;
+            return success;
         }
-
-        public Product ProductVerwijderen(Product teVerwijderenProduct)
-        {
-            var paramOrderId = "@orderId";
-            var qry = $@"delete from orders
-where {VELD_ORDERS_ORDER_ID} = {paramOrderId}
-";
-
-            var productIdParameter = new MySqlParameter(paramOrderId, teVerwijderenProduct.OrderId);
-
-            DeleteQuery(qry, productIdParameter);
-
-            return teVerwijderenProduct;
-        }
-
-        protected DataTable OrderProductenTable
-        {
-            get
-            {
-                var qry = $@"
-select 
-    {VELD_ORDER_PRODUCT_ORDER_ID},
-    {VELD_ORDER_PRODUCT_PRODUCT_ID},
-    {VELD_ORDER_PRODUCT_AANTAL},
-    {VELD_ORDER_PRODUCT_VERKOOPPRIJS}
-from order_product
-order by {VELD_ORDER_PRODUCT_ORDER_ID};";
-
-                return GetDataTableForQuery(qry);
-            }
-        }
-
-        protected DataTable OrdersTable
-        {
-            get
-            {
-                var qry = $@"
-select 
-    {VELD_ORDERS_ORDER_ID}, 
-    {VELD_ORDERS_DATUM_AANMAAK},
-from orders
-order by {VELD_ORDERS_ORDER_ID};";
-
-                return GetDataTableForQuery(qry);
-            }
-        }
-
-        protected DataTable GetProductenTableByProduct(int productId)
-        {
-            var paramProductId = "@productId";
-            var qry = $@"
-select 
-    {VELD_ORDER_PRODUCT_ORDER_ID}, 
-    {VELD_ORDER_PRODUCT_PRODUCT_ID},
-    {VELD_ORDER_PRODUCT_AANTAL}, 
-    {VELD_ORDER_PRODUCT_VERKOOPPRIJS}
-from order_producten
-where {VELD_ORDER_PRODUCT_PRODUCT_ID} = {paramProductId} or {paramProductId} = 0
-order by {VELD_ORDER_PRODUCT_PRODUCT_ID};";
-
-            return GetDataTableForQuery(qry, new MySqlParameter(paramProductId, productId));
-        }
-
-
-
     }
 }
-

@@ -70,6 +70,9 @@ namespace FancyCashRegister.Forms
         private void btnAfgerond_Click(object sender, EventArgs e)
         {
             _order.Betaald = true;
+            OrderRepository orderRepository = new OrderRepository();
+            orderRepository.AddOrder(_order);
+
             _klantForm.Reset();
             _mainForm.Reset();
             _mainForm.Show();
