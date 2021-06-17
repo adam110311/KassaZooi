@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace FancyCashRegister.Services.Data
 {
-    class OrderRepository : BaseDbRepository
+    public class OrderRepository : BaseDbRepository
     {
         protected const string VELD_ORDERS_ORDER_ID = "order_id";
         protected const string VELD_ORDERS_DATUM_AANMAAK = "datum_aanmaak";

@@ -201,7 +201,7 @@ namespace FancyCashRegister.Forms
                     .WriteTo.File(@"C:\temp\logs" + datum + ".txt")
                     .CreateLogger())
                 {
-                    log.Information(Convert.ToString(ConfigRepository.HuidigeGebruiker.VolledigeNaam) + " " +toeTeVoegenProduct.Verkoopprijs + " " + aantalToeTeVoegen + " " +  "product/producten toegevoeg");
+                    log.Information(Convert.ToString(ConfigRepository.HuidigeGebruiker.VolledigeNaam) + " " +toeTeVoegenProduct.Verkoopprijs + " " + aantalToeTeVoegen + " " +  "product/producten toegevoegd");
                 }
             }
         }
@@ -360,6 +360,13 @@ namespace FancyCashRegister.Forms
         private void bsBeschikbareProducten_ListChanged(object sender, ListChangedEventArgs e)
         {
 
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            var RapportageForm = new RapportageForm();
+            this.Hide();
+            RapportageForm.Show(this);
         }
     }
 }
